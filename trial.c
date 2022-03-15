@@ -139,6 +139,47 @@ int argMin(int in_index) {
 	return pos;
 }
 
+void link(node n, node f){
+	printf("link %d as child of %d\n", ptr2loc(n, A), ptr2loc(f, A));
+	n->brother=f->child;
+	n->father=f;
+	f->rank++;
+	f->child=n;
+}
+
+static node clink(node *L1, node *L2, node *L0){ /*Compara entre 2 raizes e decide baseada nos ranks se copia uma árvore para a lista final, ou se as liga e nesse caso compara antes os valores V (A com menor valor V fica como pai)*/
+	if((*L1)->rank<(*L2)->rank)
+		L0=L1;
+	if((*L1)->rank==(*L2)->rank){/*min -> father; max ->child;*/
+		if((*L1)->v<=(*L2)->v){
+			link(*L1,*L2);
+			L0=L1;
+		}
+		else{
+			link(*L2,*L1);/*Caso B1 Fica como raiz a que tiver o filho mais pequeno*/
+			L0=L2;
+		}
+	}
+	if((*L1)->rank>(*L2)->rank)
+		L0=L2;
+	return *L0;
+}
+
+/*U*/
+int unite(int x,int p){
+	node *z;
+	node a=&A[x];
+	node pp=&A[p];
+	while(A[x].brother!=NULL || A[p].brother!=NULL){
+		*z=clink(&a,&pp,z);
+	}
+	return ptr2loc(*z,A);
+}
+
+
+
+
+
 /* Main */
 int main()
 {
